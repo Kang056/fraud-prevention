@@ -1,7 +1,8 @@
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   background: var(--dark-bg);
   color: var(--text-primary);
 }
@@ -79,6 +80,7 @@
 .game-main {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   background: var(--dark-bg);
 }
