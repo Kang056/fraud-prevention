@@ -1,0 +1,195 @@
+/* 賽博龐克風格基礎樣式 */
+
+:root {
+  /* 賽博龐克主色系 */
+  --neon-purple: #a21cff;
+  --neon-cyan: #00d4ff;
+  --neon-pink: #ff006e;
+  --neon-green: #39ff14;
+  --dark-bg: #0a0e27;
+  --dark-secondary: #1a1f3a;
+  --glitch-red: #ff0000;
+  --glitch-blue: #0080ff;
+  
+  /* 文字顏色 */
+  --text-primary: #ffffff;
+  --text-secondary: #b0b8cc;
+  --text-muted: #6c7a8a;
+  
+  /* 邊框與細節 */
+  --border-neon: 2px solid var(--neon-cyan);
+  --border-danger: 2px solid var(--neon-pink);
+  --border-safe: 2px solid var(--neon-green);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--dark-bg);
+  color: var(--text-primary);
+  font-family: 'Courier New', monospace;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+}
+
+/* 霓虹效果 */
+.neon-glow {
+  text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-purple), 0 0 40px var(--neon-cyan);
+}
+
+.neon-glow-pink {
+  text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
+}
+
+.neon-glow-green {
+  text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green), 0 0 40px var(--neon-green);
+}
+
+/* 故障藝術效果 */
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.glitch-effect {
+  animation: glitch 0.2s infinite;
+}
+
+/* 掃描線效果 */
+@keyframes scanlines {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+
+.scanlines {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanlines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  animation: scanlines 8s linear infinite;
+}
+
+/* 按鈕樣式 */
+button {
+  background: transparent;
+  border: var(--border-neon);
+  color: var(--neon-cyan);
+  padding: 10px 20px;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+button:hover {
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+button.danger {
+  border-color: var(--neon-pink);
+  color: var(--neon-pink);
+  box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+}
+
+button.danger:hover {
+  background: rgba(255, 0, 110, 0.1);
+  box-shadow: 0 0 20px rgba(255, 0, 110, 0.6);
+}
+
+button.success {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+}
+
+button.success:hover {
+  background: rgba(57, 255, 20, 0.1);
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
+}
+
+/* 卡牌容器 */
+.card {
+  background: linear-gradient(135deg, rgba(26, 31, 58, 0.8), rgba(10, 14, 39, 0.9));
+  border: var(--border-neon);
+  border-radius: 4px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+/* 掃描儀動畫 */
+@keyframes pulse-scan {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse-scan {
+  animation: pulse-scan 1.5s ease-in-out infinite;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  :root {
+    --neon-glow: 0 0 5px var(--neon-cyan);
+  }
+  
+  body {
+    font-size: 14px;
+  }
+}
