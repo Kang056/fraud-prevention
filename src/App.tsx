@@ -3,12 +3,14 @@ import ScannerScreen from './components/Scanner/ScannerScreen'
 import BestiaryScreen from './components/Bestiary/BestiaryScreen'
 import BountyScreen from './components/Bounty/BountyScreen'
 import BattleScreen from './components/Battle/BattleScreen'
+import ResultScreen from './components/Result/ResultScreen'
 import './App.css'
 import { BattleResponse } from './types/game'
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('scanner')
   const [battleData, setBattleData] = useState<BattleResponse | null>(null)
+  const [battleResult, setBattleResult] = useState<'victory' | 'draw' | 'defeat' | null>(null)
   const [gameState, setGameState] = useState({
     level: 1,
     experience: 0,
@@ -21,6 +23,8 @@ function App() {
   }
 
   const handleBattleEnd = (result: 'victory' | 'draw' | 'defeat') => {
+    setBattleResult(result)
+    
     if (result === 'victory') {
       setGameState(prev => ({
         ...prev,
@@ -28,7 +32,12 @@ function App() {
         experience: prev.experience + 100
       }))
     }
+    setCurrentScreen('result')
+  }
+
+  const handleResultReset = () => {
     setBattleData(null)
+    setBattleResult(null)
     setCurrentScreen('scanner')
   }
 
@@ -77,6 +86,9 @@ function App() {
         )}
         {currentScreen === 'battle' && battleData && (
           <BattleScreen beastData={battleData} onBattleEnd={handleBattleEnd} />
+        )}
+        {currentScreen === 'result' && battleData && battleResult && (
+          <ResultScreen result={battleResult} beastData={battleData} onReset={handleResultReset} />
         )}
       </main>
 

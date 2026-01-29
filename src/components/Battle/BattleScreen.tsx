@@ -71,13 +71,38 @@ export default function BattleScreen({ beastData, onBattleEnd }: BattleScreenPro
     }, 2000)
   }
 
+  const getThreatStars = (level: string) => {
+    switch (level) {
+      case 'low': return '★☆☆☆☆'
+      case 'medium': return '★★☆☆☆'
+      case 'high': return '★★★★☆'
+      case 'extreme': return '★★★★★'
+      default: return '★☆☆☆☆'
+    }
+  }
+
   return (
     <div className="battle-screen">
+      {/* HUD Layer */}
+      <div className="battle-hud">
+        <div className="hud-section hud-left">
+          <span className="hud-label">THREAT LEVEL</span>
+          <span className="hud-value threat-stars">{getThreatStars(beastData.riskLevel)}</span>
+        </div>
+        <div className="hud-section hud-center">
+          <span className="match-timer">00:{timeLeft.toString().padStart(2, '0')}</span>
+        </div>
+        <div className="hud-section hud-right">
+          <span className="hud-label">CREDIT</span>
+          <span className="hud-value crypto-counter">₿ 0450</span>
+        </div>
+      </div>
+
       <div className="battle-arena">
         {/* 詐獸側 */}
         <div className="battle-side beast-side">
-          <div className={`beast-avatar ${beastHP <= 0 ? 'defeated' : ''}`}>
-            <div className="beast-placeholder">
+          <div className={`beast-avatar ${beastHP <= 0 ? 'defeated' : ''} glitch-container`}>
+            <div className={`beast-placeholder ${beastHP > 0 ? 'glitch-anim' : ''}`}>
               {beastData.beastAttribute === 'greed' && '🤑'}
               {beastData.beastAttribute === 'fear' && '😨'}
               {beastData.beastAttribute === 'emotion' && '💔'}
@@ -85,7 +110,7 @@ export default function BattleScreen({ beastData, onBattleEnd }: BattleScreenPro
           </div>
 
           <div className="battle-entity-info">
-            <h3 className="entity-name">{beastData.beastName}</h3>
+            <h3 className="entity-name glitch-text">{beastData.beastName}</h3>
             <div className="attribute-badge">
               {beastData.beastAttribute === 'greed' && '🤑 貪婪系'}
               {beastData.beastAttribute === 'fear' && '😨 恐懼系'}
@@ -100,11 +125,11 @@ export default function BattleScreen({ beastData, onBattleEnd }: BattleScreenPro
                   style={{ width: `${Math.max(0, beastHP)}%` }}
                 ></div>
               </div>
-              <div className="hp-value">{Math.max(0, beastHP)}/100</div>
+              <div className="hp-value">{Math.max(0, beastHP)}%</div>
             </div>
           </div>
 
-          <div className="beast-dialogue">
+          <div className="beast-dialogue typing-effect">
             <p className="dialogue-text">"{beastData.attackTactic}"</p>
           </div>
         </div>
@@ -112,13 +137,13 @@ export default function BattleScreen({ beastData, onBattleEnd }: BattleScreenPro
         {/* VS */}
         <div className="battle-vs">
           <div className="vs-text">VS</div>
-          <div className="round-indicator">回合 {round}</div>
+          <div className="round-indicator">ROUND {round}</div>
         </div>
 
         {/* 獵人側 */}
         <div className="battle-side hunter-side">
           <div className="battle-entity-info">
-            <h3 className="entity-name">獵人</h3>
+            <h3 className="entity-name">HUNTER</h3>
             <div className="level-badge">Lv.1</div>
 
             <div className="hp-bar-container">
@@ -129,7 +154,7 @@ export default function BattleScreen({ beastData, onBattleEnd }: BattleScreenPro
                   style={{ width: `${Math.max(0, hunterHP)}%` }}
                 ></div>
               </div>
-              <div className="hp-value">{Math.max(0, hunterHP)}/100</div>
+              <div className="hp-value">{Math.max(0, hunterHP)}%</div>
             </div>
           </div>
 
@@ -140,76 +165,69 @@ export default function BattleScreen({ beastData, onBattleEnd }: BattleScreenPro
       </div>
 
       {/* 戰鬥選項 */}
-      {battleActive && (
-        <div className="battle-choices">
-          <div className="timer-display">
-            <div className="timer-circle" style={{ '--time': timeLeft / 10 } as any}>
-              <span className="timer-text">{timeLeft}s</span>
+      <div className={`battle-choices ${!battleActive ? 'phase-resolution' : ''}`}>
+        {!battleActive && selectedCard && (
+           <div className="resolution-overlay">
+             <h2>
+               {selectedCard === 'critical' ? 'CRITICAL HIT' : 
+                selectedCard === 'trap' ? 'SYSTEM FAILURE' : 'DEFENSE UP'}
+             </h2>
+           </div>
+        )}
+
+        <div className="card-grid">
+          <button
+            className={`battle-card card-trap ${selectedCard && selectedCard !== 'trap' ? 'card-dimmed' : ''} ${selectedCard === 'trap' ? 'card-selected' : ''}`}
+            onClick={() => handleCardSelect('trap')}
+            disabled={selectedCard !== null}
+          >
+            <div className="card-header">🔴 TRAP</div>
+            <div className="card-title">驚慌匯款</div>
+            <div className="card-content">
+              {beastData.responseCards.trap}
             </div>
-          </div>
+            <div className="card-result">💀 GAME OVER</div>
+          </button>
 
-          <div className="card-grid">
-            <button
-              className="battle-card card-trap"
-              onClick={() => handleCardSelect('trap')}
-              disabled={selectedCard !== null}
-            >
-              <div className="card-header">🔴 陷阱卡</div>
-              <div className="card-title">驚慌匯款</div>
-              <div className="card-content">
-                {beastData.responseCards.trap}
-              </div>
-              <div className="card-result">💀 GAME OVER</div>
-            </button>
+          <button
+             className={`battle-card card-defend ${selectedCard && selectedCard !== 'defend' ? 'card-dimmed' : ''} ${selectedCard === 'defend' ? 'card-selected' : ''}`}
+            onClick={() => handleCardSelect('defend')}
+            disabled={selectedCard !== null}
+          >
+            <div className="card-header">🟡 DEFENSE</div>
+            <div className="card-title">直接掛斷</div>
+            <div className="card-content">
+              {beastData.responseCards.defend}
+            </div>
+            <div className="card-result">🛡️ DRAW</div>
+          </button>
 
-            <button
-              className="battle-card card-defend"
-              onClick={() => handleCardSelect('defend')}
-              disabled={selectedCard !== null}
-            >
-              <div className="card-header">🟡 防禦卡</div>
-              <div className="card-title">直接掛斷</div>
-              <div className="card-content">
-                {beastData.responseCards.defend}
-              </div>
-              <div className="card-result">🛡️ DRAW</div>
-            </button>
-
-            <button
-              className="battle-card card-critical"
-              onClick={() => handleCardSelect('critical')}
-              disabled={selectedCard !== null}
-            >
-              <div className="card-header">🟢 爆擊卡</div>
-              <div className="card-title">邏輯反殺</div>
-              <div className="card-content">
-                {beastData.responseCards.critical}
-              </div>
-              <div className="card-result">⚔️ CRITICAL!</div>
-            </button>
-          </div>
-
-          <p className="battle-prompt">選擇最佳回應卡牌！</p>
+          <button
+             className={`battle-card card-critical ${selectedCard && selectedCard !== 'critical' ? 'card-dimmed' : ''} ${selectedCard === 'critical' ? 'card-selected' : ''}`}
+            onClick={() => handleCardSelect('critical')}
+            disabled={selectedCard !== null}
+          >
+            <div className="card-header">🟢 CRITICAL</div>
+            <div className="card-title">邏輯反殺</div>
+            <div className="card-content">
+              {beastData.responseCards.critical}
+            </div>
+            <div className="card-result">⚔️ VICTORY</div>
+          </button>
         </div>
-      )}
+      </div>
 
       {/* 戰鬥日誌 */}
-      <div className="battle-log">
-        <h4>戰鬥記錄</h4>
+      <div className="battle-log terminal-style">
+        <h4>&gt; SYSTEM_LOG</h4>
         <div className="log-entries">
           {battleLog.map((log, idx) => (
             <div key={idx} className="log-entry">
-              {log}
+              <span className="log-prefix">[{new Date().toLocaleTimeString('en-US', {hour12: false})}]</span> {log}
             </div>
           ))}
         </div>
       </div>
-
-      {!battleActive && (
-        <div className="battle-waiting">
-          <p>結果處理中...</p>
-        </div>
-      )}
     </div>
   )
 }

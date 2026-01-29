@@ -16,6 +16,7 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
   const [error, setError] = useState('')
 
   const handleScan = async () => {
+    console.log('handleScan triggered', { inputValue, inputType });
     if (!inputValue.trim()) {
       setError('請輸入要掃描的內容')
       return
@@ -26,20 +27,24 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
     setScanResult(null)
 
     try {
+      console.log('Calling analyzeInput...');
       // 調用 AI 分析服務
       const result = await analyzeInput(inputValue, inputType)
+      console.log('analyzeInput result:', result);
       setScanResult(result)
 
       // 根據風險等級決定是否進入戰鬥
       if (['high', 'extreme'].includes(result.riskLevel)) {
+        console.log('High risk detected, scheduling battle start...');
         // 延遲後自動進入戰鬥
         setTimeout(() => {
+          console.log('Starting battle...');
           onBattleStart(result)
         }, 2000)
       }
     } catch (err) {
+      console.error('Scan failed:', err)
       setError('掃描失敗，請稍後重試')
-      console.error(err)
     } finally {
       setScanning(false)
     }

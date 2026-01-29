@@ -1,0 +1,232 @@
+.result-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  gap: 20px;
+  animation: screenFadeIn 0.5s ease;
+}
+
+@keyframes screenFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.result-header h1 {
+  font-size: 32px;
+  letter-spacing: 4px;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.result-victory .result-header h1 { color: var(--neon-green); }
+.result-defeat .result-header h1 { color: var(--glitch-red); }
+.result-draw .result-header h1 { color: #ffaa00; }
+
+/* 3D Card Animation */
+.card-container {
+  perspective: 1000px;
+  width: 300px;
+  height: 450px;
+}
+
+.beast-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.beast-card:not(.revealed) {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  border: 2px solid var(--neon-cyan);
+}
+
+.card-back {
+  background: linear-gradient(45deg, #111, #222);
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: var(--neon-purple);
+}
+
+.card-back .logo-icon {
+  font-size: 40px;
+  font-weight: bold;
+  color: var(--neon-purple);
+  text-shadow: 0 0 10px var(--neon-purple);
+}
+
+.card-front {
+  background: rgba(10, 14, 39, 0.95);
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+}
+
+/* Card Content */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--text-secondary);
+}
+
+.card-image-placeholder {
+  flex: 1;
+  background: radial-gradient(circle, rgba(162, 28, 255, 0.2), transparent);
+  border: 1px dashed var(--neon-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.beast-icon {
+  font-size: 80px;
+}
+
+.stamp-deceased {
+  position: absolute;
+  color: var(--glitch-red);
+  font-size: 40px;
+  font-weight: bold;
+  border: 5px solid var(--glitch-red);
+  padding: 5px 10px;
+  transform: rotate(-30deg);
+  opacity: 0;
+  animation: stamp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.2s forwards;
+}
+
+@keyframes stamp {
+  from { transform: scale(3) rotate(-30deg); opacity: 0; }
+  to { transform: scale(1) rotate(-30deg); opacity: 0.8; }
+}
+
+.card-info h3 {
+  margin: 0;
+  color: var(--neon-cyan);
+  font-size: 20px;
+}
+
+.card-info p {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-left: 2px solid var(--neon-purple);
+  padding-left: 10px;
+  margin: 10px 0;
+}
+
+.card-weakness {
+  background: rgba(57, 255, 20, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.card-weakness strong {
+  color: var(--neon-green);
+  font-size: 12px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.card-weakness p {
+  margin: 0;
+  font-size: 12px;
+  color: #fff;
+}
+
+/* Stats */
+.result-stats {
+  display: flex;
+  gap: 30px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+}
+
+.result-stats.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-row .label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+}
+
+.stat-row .value {
+  font-size: 24px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.value.money { color: #ffaa00; text-shadow: 0 0 10px #ffaa00; }
+.value.xp { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+
+/* Actions */
+.result-actions {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.result-actions button {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: transparent;
+  color: #fff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-share {
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+}
+
+.btn-share:hover {
+  background: rgba(162, 28, 255, 0.2);
+  box-shadow: 0 0 15px var(--neon-purple);
+}
+
+.btn-next {
+  background: var(--neon-cyan);
+  color: #000;
+  border-color: var(--neon-cyan);
+}
+
+.btn-next:hover {
+  background: transparent;
+  color: var(--neon-cyan);
+  box-shadow: 0 0 15px var(--neon-cyan);
+}
