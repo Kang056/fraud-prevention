@@ -2,7 +2,7 @@
   "name": "我的 Node 20 開發環境",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
   // 轉發 Port (Angular 預設 4200，若你有改 port 請在此調整)
-  "forwardPorts": [4201],
+  "forwardPorts": [5173],
   "customizations": {
     "vscode": {
       "settings": {},
@@ -10,6 +10,5 @@
         "dbaeumer.vscode-eslint" 
       ]
     }
-  },
-  "forwardPorts": [3000]
+  }
 }
