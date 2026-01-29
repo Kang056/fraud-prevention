@@ -236,7 +236,10 @@ export default function BountyScreen() {
             </div>
 
             {selectedBounty.status === 'active' && (
-              <button className="submit-button success">
+              <button 
+                className="submit-button success"
+                onClick={() => alert(`已提交樣本到: ${selectedBounty.title}！\n審核通過後將發送獎勵。`)}
+              >
                 📤 提交詐騙樣本
               </button>
             )}

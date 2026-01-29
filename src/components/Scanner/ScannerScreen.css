@@ -276,6 +276,28 @@
   margin-top: 15px;
 }
 
+.scanner-logs {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--neon-cyan);
+  min-height: 80px;
+  border: 1px dashed var(--neon-cyan);
+}
+
+.log-line {
+  margin-bottom: 4px;
+  opacity: 0;
+  animation: logFadeIn 0.3s forwards;
+}
+
+@keyframes logFadeIn {
+  to { opacity: 1; }
+}
+
 .hunter-tip {
   display: flex;
   gap: 10px;

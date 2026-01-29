@@ -14,9 +14,11 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
   const [scanResult, setScanResult] = useState<BattleResponse | null>(null)
   const [inputType, setInputType] = useState<'text' | 'url'>('text')
   const [error, setError] = useState('')
+  const [scanLogs, setScanLogs] = useState<string[]>([])
+
+  const addLog = (msg: string) => setScanLogs(prev => [...prev.slice(-4), msg])
 
   const handleScan = async () => {
-    console.log('handleScan triggered', { inputValue, inputType });
     if (!inputValue.trim()) {
       setError('請輸入要掃描的內容')
       return
@@ -25,26 +27,34 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
     setScanning(true)
     setError('')
     setScanResult(null)
+    setScanLogs(['> 初始化神經網絡...', '> 連接反詐騙資料庫...'])
+    
+    // Simulate steps
+    setTimeout(() => addLog('> 分析文本語義...'), 500)
+    setTimeout(() => addLog('> 比對已知道特徵值...'), 1000)
 
     try {
-      console.log('Calling analyzeInput...');
       // 調用 AI 分析服務
       const result = await analyzeInput(inputValue, inputType)
+      addLog('> 分析完成!')
       console.log('analyzeInput result:', result);
       setScanResult(result)
 
       // 根據風險等級決定是否進入戰鬥
-      if (['high', 'extreme'].includes(result.riskLevel)) {
-        console.log('High risk detected, scheduling battle start...');
+      if (['medium', 'high', 'extreme'].includes(result.riskLevel)) {
+        addLog(`> 偵測到風險: ${result.riskLevel.toUpperCase()}`)
+        addLog('> 啟動戰鬥協議...')
         // 延遲後自動進入戰鬥
         setTimeout(() => {
-          console.log('Starting battle...');
           onBattleStart(result)
         }, 2000)
+      } else {
+        addLog('> 區域安全.')
       }
     } catch (err) {
       console.error('Scan failed:', err)
       setError('掃描失敗，請稍後重試')
+      addLog('> 錯誤: 掃描中斷')
     } finally {
       setScanning(false)
     }
@@ -53,7 +63,7 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
   return (
     <div className="scanner-screen">
       <div className="radar-container">
-        <div className="radar-circle"></div>
+        <div className={`radar-circle ${scanning ? 'scanning' : ''}`}></div>
         <div className="radar-sweep"></div>
       </div>
 
@@ -62,6 +72,7 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
         <p className="scanner-subtitle">輸入可疑資訊進行風險評估</p>
 
         <div className="input-section">
+          {/* ... inputs ... */}
           <div className="input-type-selector">
             <button 
               className={inputType === 'text' ? 'active' : ''}
@@ -82,11 +93,15 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={inputType === 'text' 
-              ? '貼上可疑的訊息、對話或通知文本...' 
+              ? '貼上可疑的訊息 (例如: "保證獲利", "急需匯款")...' 
               : '輸入可疑的網址...'}
             disabled={scanning}
             rows={6}
           />
+          
+          <div className="scanner-logs">
+             {scanLogs.map((log, i) => <div key={i} className="log-line">{log}</div>)}
+          </div>
 
           {error && <div className="error-message">{error}</div>}
 
@@ -147,6 +162,12 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
               {scanResult.riskLevel === 'medium' && (
                 <div className="caution-box">
                   <p>此內容存在中等風險，請保持警惕</p>
+                  <button 
+                    className="battle-button warning"
+                    onClick={() => onBattleStart(scanResult)}
+                  >
+                    ⚔️ 強制進入演習
+                  </button>
                 </div>
               )}
 
@@ -169,3 +190,4 @@ export default function ScannerScreen({ onBattleStart, gameState }: ScannerScree
     </div>
   )
 }
+

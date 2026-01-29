@@ -4,7 +4,7 @@ import { BattleResponse, BeastAttribute } from '../types/game'
 const SCAM_PATTERNS = {
   greed: [
     {
-      keywords: ['股票', '投資', '報酬率', '保證', '漲停'],
+      keywords: ['股票', '投資', '報酬率', '保證', '漲停', '獲利', '賺錢', '飆股', '內線', '佈局'],
       beastName: '飆股暴利龍',
       attackTactic: '只有今天這支股票將漲停！立刻投資，月入 10 倍！',
       attribute: 'greed' as BeastAttribute,
@@ -12,17 +12,25 @@ const SCAM_PATTERNS = {
       riskLevel: 'high'
     },
     {
-      keywords: ['買虛擬幣', '加密貨幣', '礦場', '挖礦', '返現'],
+      keywords: ['買虛擬幣', '加密貨幣', '礦場', '挖礦', '返現', 'USDT', '比特幣', '泰達幣', '錢包'],
       beastName: '幣圈吸血鬼',
       attackTactic: '這個新幣種保証翻倍！只需投資 500 美元就能日賺千元！',
       attribute: 'greed' as BeastAttribute,
       weakness: '查詢該虛擬幣的正規交易所',
       riskLevel: 'extreme'
+    },
+     {
+      keywords: ['中獎', '領獎', '好禮', '免費', '贈送', '抽中', '恭喜'],
+      beastName: '幸運假象怪',
+      attackTactic: '恭喜你中獎了！只要支付手續費就能領取 iPhone！',
+      attribute: 'greed' as BeastAttribute,
+      weakness: '驗證活動官方網站',
+      riskLevel: 'medium'
     }
   ],
   fear: [
     {
-      keywords: ['爸媽', '孩子被抓', '綁架', '急需匯款'],
+      keywords: ['爸媽', '孩子被抓', '綁架', '急需匯款', '被打', '救我', '流血', '醫院'],
       beastName: '哭腔獸',
       attackTactic: '爸！我被打得好慘，快匯款救我！不要告訴媽媽！',
       attribute: 'fear' as BeastAttribute,
@@ -30,7 +38,7 @@ const SCAM_PATTERNS = {
       riskLevel: 'extreme'
     },
     {
-      keywords: ['帳戶凍結', '違法', '法院', '檢舉'],
+      keywords: ['帳戶凍結', '違法', '法院', '檢舉', '拘留', '警示', '洗錢', '傳票'],
       beastName: '法務恐懼獸',
       attackTactic: '你的帳戶涉及洗錢！再不配合就要被逮捕！',
       attribute: 'fear' as BeastAttribute,
@@ -40,7 +48,7 @@ const SCAM_PATTERNS = {
   ],
   emotion: [
     {
-      keywords: ['戀愛', '寶寶', '親愛的', '愛你'],
+      keywords: ['戀愛', '寶寶', '親愛的', '愛你', '老公', '老婆', '緣分', '交友'],
       beastName: '殺豬盤魅魔',
       attackTactic: '親愛的寶寶，我需要錢投資，請幫我匯款好嗎？',
       attribute: 'emotion' as BeastAttribute,
@@ -75,12 +83,19 @@ export async function analyzeInput(input: string, inputType: 'text' | 'url'): Pr
 
   // 如果沒有匹配到特定模式，進行基本風險評估
   if (!matchedPattern) {
-    const suspiciousKeywords = ['匯款', '急需', '只限今天', '保證', '限時', '立刻', '緊急']
+    const suspiciousKeywords = ['匯款', '急需', '只限今天', '保證', '限時', '立刻', '緊急', '點擊', '連結', '帳號', '加賴', 'LINE', 'ID']
     const matchCount = suspiciousKeywords.filter(kw => lowerInput.includes(kw)).length
 
-    if (matchCount >= 3) {
+    if (matchCount >= 2) {
       riskLevel = 'high'
-    } else if (matchCount >= 2) {
+      // Create a generic monster for generic high risk
+       matchedPattern = {
+          beastName: '未知雜訊獸',
+          attackTactic: '偵測到多個可疑關鍵字，具體意圖不明。',
+          weakness: '多方查證，不輕易行動',
+          riskLevel: 'high'
+       }
+    } else if (matchCount >= 1) {
       riskLevel = 'medium'
     } else {
       riskLevel = 'low'
@@ -88,7 +103,7 @@ export async function analyzeInput(input: string, inputType: 'text' | 'url'): Pr
   }
 
   // 建立詐獸形象（如果風險高或以上）
-  if (['high', 'extreme'].includes(riskLevel) && matchedPattern) {
+  if (['medium', 'high', 'extreme'].includes(riskLevel) && matchedPattern) {
     return {
       riskLevel,
       beastName: matchedPattern.beastName,
@@ -139,7 +154,7 @@ function generateCritical(pattern: any): string {
     ]
   }
 
-  const typeKey = pattern.attribute
+  const typeKey = pattern.attribute || 'greed'
   const options = criticals[typeKey] || criticals.greed
   return options[Math.floor(Math.random() * options.length)]
 }
