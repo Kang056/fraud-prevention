@@ -1,14 +1,47 @@
 import { useState } from 'react'
+import ScannerScreen from './components/Scanner/ScannerScreen'
+import BestiaryScreen from './components/Bestiary/BestiaryScreen'
+import BountyScreen from './components/Bounty/BountyScreen'
+import BattleScreen from './components/Battle/BattleScreen'
 import './App.css'
+import { BattleResponse } from './types/game'
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('scanner')
+  const [battleData, setBattleData] = useState<BattleResponse | null>(null)
+  const [gameState, setGameState] = useState({
+    level: 1,
+    experience: 0,
+    beastsDefeated: 0
+  })
+
+  const handleBattleStart = (beastData: BattleResponse) => {
+    setBattleData(beastData)
+    setCurrentScreen('battle')
+  }
+
+  const handleBattleEnd = (result: 'victory' | 'draw' | 'defeat') => {
+    if (result === 'victory') {
+      setGameState(prev => ({
+        ...prev,
+        beastsDefeated: prev.beastsDefeated + 1,
+        experience: prev.experience + 100
+      }))
+    }
+    setBattleData(null)
+    setCurrentScreen('scanner')
+  }
 
   return (
     <div className="app">
       <header className="game-header">
         <h1 className="game-title neon-glow">詐獸獵人</h1>
         <p className="game-subtitle">PROJECT S.C.A.M.</p>
+        <div className="game-stats">
+          <span>Lv. {gameState.level}</span>
+          <span>EXP: {gameState.experience}</span>
+          <span>獵獸: {gameState.beastsDefeated}</span>
+        </div>
       </header>
 
       <nav className="game-nav">
@@ -34,22 +67,16 @@ function App() {
 
       <main className="game-main scanlines">
         {currentScreen === 'scanner' && (
-          <div className="screen">
-            <h2>🎯 詐騙掃描儀</h2>
-            <p>輸入可疑信息進行分析...</p>
-          </div>
+          <ScannerScreen onBattleStart={handleBattleStart} gameState={gameState} />
         )}
         {currentScreen === 'bestiary' && (
-          <div className="screen">
-            <h2>📖 獵人圖鑑</h2>
-            <p>查看已收集的詐獸...</p>
-          </div>
+          <BestiaryScreen />
         )}
         {currentScreen === 'bounty' && (
-          <div className="screen">
-            <h2>💰 懸賞公會</h2>
-            <p>接受狩獵任務...</p>
-          </div>
+          <BountyScreen />
+        )}
+        {currentScreen === 'battle' && battleData && (
+          <BattleScreen beastData={battleData} onBattleEnd={handleBattleEnd} />
         )}
       </main>
 
